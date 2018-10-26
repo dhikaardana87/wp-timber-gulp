@@ -1,0 +1,10 @@
+@import 'bootstrap';
+
+// Pages
+@import './pages/home';
+@import './pages/articles';
+
+main {
+    overflow: hidden;
+    margin-top: -20px;
+}

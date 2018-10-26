@@ -1,0 +1,51 @@
+{% block html_head_container %}
+
+{% include 'html-header.twig' %}
+{% block head %}
+{% endblock %}
+<link rel="stylesheet" href="{{site.theme.link}}/css/main.css" type="text/css">
+</head>
+{% endblock %}
+
+<body class="{{body_class}}" data-template="main.twig">
+    <header>
+        {% block header %}
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <a class="navbar-brand" href="{{site.url}}">{{site.name}}</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                {% include "components/menu-nav.twig" with {'menu': menu.get_items} %}
+            </div>
+        </nav>
+        {% endblock %}
+    </header>
+
+
+    <main role="main"> 
+        {% block content %}
+        Sorry, no content
+        {% endblock %}
+    </main>
+
+    {% block footer %}
+        {% include 'footer.twig' %}
+        {{ function('wp_footer') }}
+    {% endblock %}
+
+    <!-- build:js -->
+    <script src="{{site.theme.link}}/js/main.js"></script>
+    <!-- endbuild -->
+
+    <!-- build:liveReload -->
+    <script>
+        document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
+            ':35729/livereload.js?snipver=1"></' + 'script>')
+    </script>
+    <!-- endbuild -->
+
+</body>
+
+</html>

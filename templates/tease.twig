@@ -1,0 +1,14 @@
+<div class="col-md-4 tease tease-{{post.post_type}}" id="tease-{{post.ID}}">
+	{% block content %}
+		<article class="card mb-4" style="width: 100%">
+			{% if post.get_thumbnail %}
+				<img class="card-img-top" src="{{post.thumbnail.src}}" alt="{{post.title}}">
+			{% endif %}
+			<div class="card-body">
+				<h5 class="card-title">{{post.title}}</h5>
+				<p class="card-text">{{post.content}}</p>
+				<a href="{{post.link}}" class="btn btn-secondary">Show More</a>
+			</div>
+		</article>
+	{% endblock %}
+</div>
