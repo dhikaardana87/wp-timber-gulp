@@ -153,3 +153,156 @@ register_sidebar( array(
 	'before_title' => '<h4 class="footer__title">',
 	'after_title' => '</h4>',
 ) );
+
+
+add_action( 'init', 'tid_create_post_type' );
+function tid_create_post_type() {  // Products custom post type
+    // set up labels
+    $labels = array(
+        'name' => 'Products',
+        'singular_name' => 'Product Item',
+        'add_new' => 'Add New',
+        'add_new_item' => 'Add New Product Item',
+        'edit_item' => 'Edit Product Item',
+        'new_item' => 'New Product Item',
+        'all_items' => 'All Products',
+        'view_item' => 'View Product Item',
+        'search_items' => 'Search Products',
+        'not_found' =>  'No Products Found',
+        'not_found_in_trash' => 'No Products found in Trash',
+        'parent_item_colon' => '',
+        'menu_name' => 'Products',
+    );
+    register_post_type(
+        'Products',
+        array(
+            'labels' => $labels,
+            'has_archive' => true,
+            'public' => true,
+            'hierarchical' => true,
+            'supports' => array( 'title', 'editor', 'excerpt', 'custom-fields', 'thumbnail','page-attributes' ),
+            'taxonomies' => array( 'post_tag', 'category' ),
+            'exclude_from_search' => true,
+            'capability_type' => 'post',
+        )
+    );
+}
+ 
+// register two taxonomies to go with the post type
+add_action( 'init', 'tid_create_taxonomies', 0 );
+function tid_create_taxonomies() {
+    // color taxonomy
+    $labels = array(
+        'name'              => _x( 'Colors', 'taxonomy general name' ),
+        'singular_name'     => _x( 'Color', 'taxonomy singular name' ),
+        'search_items'      => __( 'Search Colors' ),
+        'all_items'         => __( 'All Colors' ),
+        'parent_item'       => __( 'Parent Color' ),
+        'parent_item_colon' => __( 'Parent Color:' ),
+        'edit_item'         => __( 'Edit Color' ),
+        'update_item'       => __( 'Update Color' ),
+        'add_new_item'      => __( 'Add New Color' ),
+        'new_item_name'     => __( 'New Color' ),
+        'menu_name'         => __( 'Colors' ),
+    );
+    register_taxonomy(
+        'color',
+        'Products',
+        array(
+            'hierarchical' => true,
+            'labels' => $labels,
+            'query_var' => true,
+            'rewrite' => true,
+            'show_admin_column' => true
+        )
+    );
+
+    // type taxonomy
+    $labels = array(
+        'name'              => _x( 'Types', 'taxonomy general name' ),
+        'singular_name'     => _x( 'Type', 'taxonomy singular name' ),
+        'search_items'      => __( 'Search Types' ),
+        'all_items'         => __( 'All Types' ),
+        'parent_item'       => __( 'Parent Type' ),
+        'parent_item_colon' => __( 'Parent Type:' ),
+        'edit_item'         => __( 'Edit Type' ),
+        'update_item'       => __( 'Update Type' ),
+        'add_new_item'      => __( 'Add New Type' ),
+        'new_item_name'     => __( 'New Type' ),
+        'menu_name'         => __( 'Types' ),
+    );
+    register_taxonomy(
+        'type',
+        'Products',
+        array(
+            'hierarchical' => true,
+            'labels' => $labels,
+            'query_var' => true,
+            'rewrite' => true,
+            'show_admin_column' => true
+        )
+    );
+}
+
+// create shortcode with parameters so that the user can define what's queried - default is to list all blog posts
+add_shortcode( 'list-products', 'tid_products_listing_parameters_shortcode' );
+function tid_products_listing_parameters_shortcode( $atts ) {
+    ob_start();
+ 
+    // define attributes and their defaults
+    extract( shortcode_atts( array (
+        'post_type' => 'products',
+        'order' => 'date',
+        'orderby' => 'title',
+        'posts' => -1,
+        'color' => '',
+        'type' => '',
+        'category' => '',
+    ), $atts ) );
+ 
+    // define query parameters based on attributes
+    $options = array(
+        'post_type' => $post_type,
+        'order' => $order,
+        'orderby' => $orderby,
+        'posts_per_page' => $posts,
+        'color' => $color,
+        'type' => $type,
+        'category_name' => $category,
+    );
+    $query = new WP_Query( $options );
+    // run the loop based on the query
+    if ( $query->have_posts() ) { ?>
+        <div class="row products-box my-4">
+            <?php while ( $query->have_posts() ) : $query->the_post(); ?>
+                <div class="col-md-4 item-<?php the_ID(); ?>" <?php post_class(); ?>>
+                    <a href="<?php the_permalink(); ?>" class="products-box__item">
+                        <div class="products-box__item__wrapper">
+                            <?php 
+
+                            $image = get_field('product_image');
+                            if( !empty($image) ): ?>
+                            <div class="products-box__item__img" style="background-image: url(<?php echo $image['url']; ?>)"></div>
+                            <?php endif; ?>
+                            <div class="products-box__item__content">
+                                <div class="ttl-wrapper">
+                                    <h4> <?php the_title(); ?> </h4>
+                                </div>
+                                <div class="desc-wrapper">
+                                    <p><?php the_excerpt() ?></p>
+                                </div>
+                            </div>
+                            <div class="link-wrapper">
+                                Explore
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            <?php endwhile;
+            wp_reset_postdata(); ?>
+        </div>
+    <?php
+        $myvariable = ob_get_clean();
+        return $myvariable;
+    }
+}

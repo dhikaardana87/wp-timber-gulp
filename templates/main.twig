@@ -10,7 +10,7 @@
 <body class="{{body_class}}" data-template="main.twig">
     <header>
         {% block header %}
-        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
             <a class="navbar-brand" href="{{site.url}}">{{site.name}}</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
                 aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,14 +35,6 @@
         {{ function('wp_footer') }}
     {% endblock %}
 
-    <!-- {# Load jQuery2 if !IE<9, fall back to jQuery 1.* #} -->
-    <!--[if lt IE 10]><script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script><![endif]-->
-    <!--[if gt IE 9]><!-->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <!--<![endif]-->
-    <script>
-        window.jQuery || document.write('<script src="{{site.theme.link}}/js/fallback/jquery.min.js"><\/script>')
-    </script>
     <!-- build:js -->
     <script src="{{site.theme.link}}/js/scripts.js"></script>
     <!-- endbuild -->
